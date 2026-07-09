@@ -52,14 +52,14 @@ function App() {
 
   const fetchMyLeaves = () => {
     if (!employeeId) return;
-    axios.get(`http://localhost:3000/api/leaves/employee/${employeeId}?t=${Date.now()}`)
+    axios.get(`\${import.meta.env.VITE_API_URL}/api/leaves/employee/${employeeId}?t=${Date.now()}`)
       .then(res => setMyLeaves(res.data))
       .catch(err => console.error("Could not fetch my leaves", err));
   };
 
   const fetchApprovedLeaves = () => {
     if (!employeeId) return;
-    axios.get(`http://localhost:3000/api/leaves?t=${Date.now()}`)
+    axios.get(`\${import.meta.env.VITE_API_URL}/api/leaves?t=${Date.now()}`)
       .then(res => {
         const myApproved = res.data.filter(l => l.status === 'APPROVED' && l.employeeId === employeeId);
         const blockedDates = [];
@@ -91,7 +91,7 @@ function App() {
 
   useEffect(() => {
     if (isAuthenticated && activeTab === 'profile') {
-      axios.get(`http://localhost:3000/api/employees/${employeeId}`)
+      axios.get(`\${import.meta.env.VITE_API_URL}/api/employees/${employeeId}`)
         .then(res => setEmployeeDetails(res.data))
         .catch(err => console.error('Error fetching profile', err));
     }
@@ -101,7 +101,7 @@ function App() {
     e.preventDefault();
     setLoginError('');
     try {
-      const res = await axios.post('http://localhost:3000/api/employees/login', loginForm);
+      const res = await axios.post(`\${import.meta.env.VITE_API_URL}/api/employees/login`, loginForm);
       if (!res.data.hasChangedPassword) {
         setTempEmployeeId(res.data.employeeId);
         setNeedsPasswordChange(true);
@@ -129,7 +129,7 @@ function App() {
       return;
     }
     try {
-      await axios.post('http://localhost:3000/api/employees/change-password', {
+      await axios.post(`\${import.meta.env.VITE_API_URL}/api/employees/change-password`, {
         employeeId: tempEmployeeId,
         newPassword: newPasswordForm.newPassword
       });
@@ -158,7 +158,7 @@ function App() {
     }
     
     try {
-      await axios.post('http://localhost:3000/api/employees/update-password', {
+      await axios.post(`\${import.meta.env.VITE_API_URL}/api/employees/update-password`, {
         employeeId: employeeId,
         oldPassword: profilePassForm.oldPassword,
         newPassword: profilePassForm.newPassword
@@ -200,7 +200,7 @@ function App() {
 
     setIsLoading(true);
     try {
-      await axios.post('http://localhost:3000/api/leaves', {
+      await axios.post(`\${import.meta.env.VITE_API_URL}/api/leaves`, {
         employeeId: employeeId,
         startDate,
         endDate: leaveType === 'FULL_DAY' ? endDate : startDate,
